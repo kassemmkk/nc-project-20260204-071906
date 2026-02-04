@@ -1,0 +1,10 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1770221648" />
+    <testcase name="test_keyboard_basic" classname="test_keyboard" file="/__modal/volumes/vo-7LMbsWGLJcTp4pogokIFc5/nc-project-20260204-071906/verilog/dv/cocotb/test_keyboard/test_keyboard.py" lineno="64" time="0.004332542419433594" sim_time_ns="300.001" ratio_time="69243.63825137574">
+      <failure message="Test failed with RANDOM_SEED=1770221648" />
+    </testcase>
+    <testcase name="test_keyboard_multiple_keys" classname="test_keyboard" file="/__modal/volumes/vo-7LMbsWGLJcTp4pogokIFc5/nc-project-20260204-071906/verilog/dv/cocotb/test_keyboard/test_keyboard.py" lineno="124" time="0.19647574424743652" sim_time_ns="32280.001" ratio_time="164295.0946624098" />
+    <testcase name="test_keyboard_velocity" classname="test_keyboard" file="/__modal/volumes/vo-7LMbsWGLJcTp4pogokIFc5/nc-project-20260204-071906/verilog/dv/cocotb/test_keyboard/test_keyboard.py" lineno="166" time="0.327059268951416" sim_time_ns="53440.001" ratio_time="163395.46398221297" />
+  </testsuite>
+</testsuites>
