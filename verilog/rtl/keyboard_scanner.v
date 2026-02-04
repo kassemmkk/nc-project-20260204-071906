@@ -56,16 +56,16 @@ module keyboard_scanner #(
   wire [41:0] key_released;
   
   reg [31:0] event_fifo [0:FIFO_DEPTH-1];
-  reg [3:0]  fifo_wr_ptr;
-  reg [3:0]  fifo_rd_ptr;
-  reg [3:0]  fifo_count;
+  reg [4:0]  fifo_wr_ptr;
+  reg [4:0]  fifo_rd_ptr;
+  reg [4:0]  fifo_count;
   
   wire       fifo_empty;
   wire       fifo_full;
   wire       fifo_overflow;
   
-  assign fifo_empty = (fifo_count == 4'h0);
-  assign fifo_full = (fifo_count == 4'd16);
+  assign fifo_empty = (fifo_count == 5'h0);
+  assign fifo_full = (fifo_count == 5'd16);
   
   reg fifo_overflow_flag;
   assign fifo_overflow = fifo_overflow_flag;
@@ -117,11 +117,11 @@ module keyboard_scanner #(
       if (wb_cyc_i && wb_stb_i && !wb_we_i) begin
         case (wb_adr_i[7:2])
           ADDR_CTRL[7:2]:       wb_dat_o <= ctrl_reg;
-          ADDR_STATUS[7:2]:     wb_dat_o <= {20'h0, fifo_count, 4'h0, fifo_overflow, fifo_full, !fifo_empty, enable};
-          ADDR_EVENT[7:2]:      wb_dat_o <= fifo_empty ? 32'h00000000 : event_fifo[fifo_rd_ptr];
+          ADDR_STATUS[7:2]:     wb_dat_o <= {19'h0, fifo_count, 4'h0, fifo_overflow, fifo_full, !fifo_empty, enable};
+          ADDR_EVENT[7:2]:      wb_dat_o <= fifo_empty ? 32'h00000000 : event_fifo[fifo_rd_ptr[3:0]];
           ADDR_IRQ_EN[7:2]:     wb_dat_o <= irq_en_reg;
           ADDR_IRQ_STATUS[7:2]: wb_dat_o <= irq_status_reg;
-          ADDR_SCAN_MAP[7:2]:   wb_dat_o <= {18'h0, col_in, 4'h0, 1'b0, current_row};
+          ADDR_SCAN_MAP[7:2]:   wb_dat_o <= {19'h0, col_in, 3'b000, current_row};
           default:              wb_dat_o <= 32'hDEADBEEF;
         endcase
       end
@@ -203,18 +203,18 @@ module keyboard_scanner #(
   
   always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
-      fifo_wr_ptr <= 4'h0;
-      fifo_rd_ptr <= 4'h0;
-      fifo_count <= 4'h0;
+      fifo_wr_ptr <= 5'h0;
+      fifo_rd_ptr <= 5'h0;
+      fifo_count <= 5'h0;
       for (i = 0; i < FIFO_DEPTH; i = i + 1) begin
         event_fifo[i] <= 32'h00000000;
       end
     end else begin
       if (wb_cyc_i && wb_stb_i && !wb_we_i && (wb_adr_i[7:2] == ADDR_EVENT[7:2]) && !fifo_empty) begin
-        if (fifo_rd_ptr < FIFO_DEPTH - 1)
+        if (fifo_rd_ptr < 5'd15)
           fifo_rd_ptr <= fifo_rd_ptr + 1'b1;
         else
-          fifo_rd_ptr <= 4'h0;
+          fifo_rd_ptr <= 5'h0;
         
         if (fifo_count > 0)
           fifo_count <= fifo_count - 1'b1;
@@ -230,26 +230,26 @@ module keyboard_scanner #(
               if (velocity_timer[i] < 16'h0080)
                 velocity = 8'h7F;
               else if (velocity_timer[i] < 16'h0100)
-                velocity = 8'h70 - (velocity_timer[i][7:4]);
+                velocity = 8'h70 - {4'h0, velocity_timer[i][7:4]};
               else if (velocity_timer[i] < 16'h0200)
-                velocity = 8'h60 - (velocity_timer[i][8:5]);
+                velocity = 8'h60 - {4'h0, velocity_timer[i][8:5]};
               else if (velocity_timer[i] < 16'h0400)
-                velocity = 8'h50 - (velocity_timer[i][9:6]);
+                velocity = 8'h50 - {4'h0, velocity_timer[i][9:6]};
               else if (velocity_timer[i] < 16'h0800)
-                velocity = 8'h40 - (velocity_timer[i][10:7]);
+                velocity = 8'h40 - {4'h0, velocity_timer[i][10:7]};
               else
                 velocity = 8'h20;
               
               timestamp = scan_counter[15:8];
               
-              event_fifo[fifo_wr_ptr] <= {timestamp, 7'h00, key_pressed[i], velocity, i[7:0]};
+              event_fifo[fifo_wr_ptr[3:0]] <= {timestamp, 7'h00, key_pressed[i], velocity, i[7:0]};
               
-              if (fifo_wr_ptr < FIFO_DEPTH - 1)
+              if (fifo_wr_ptr < 5'd15)
                 fifo_wr_ptr <= fifo_wr_ptr + 1'b1;
               else
-                fifo_wr_ptr <= 4'h0;
+                fifo_wr_ptr <= 5'h0;
               
-              if (fifo_count < FIFO_DEPTH)
+              if (fifo_count < 5'd16)
                 fifo_count <= fifo_count + 1'b1;
             end else begin
               fifo_overflow_flag <= 1'b1;
