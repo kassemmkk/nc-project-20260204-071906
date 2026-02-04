@@ -43,22 +43,34 @@ The instrument is implemented as a Caravel user project with the following major
 
 ## Project Status
 
-**Current Stage:** RTL Development  
-**Overall Progress:** 19% (Task 5 of 21 in progress)
+**Current Stage:** RTL Development → Verification  
+**Overall Progress:** 67% (Task 15 of 21 in progress)
 
 ### Milestones
-- [x] Project Setup Complete (Tasks 1-4 ✓)
-  - Caravel template copied
-  - IP gap analysis complete
-  - Architecture designed with full address map
-  - Register map, pad map, integration notes documented
-  - IPs linked: EF_GPIO8, CF_SRAM_1024x32, CF_I2S, CF_SPI
-- [ ] RTL Development In Progress (Tasks 5-14)
-  - Keyboard scanner module (in progress)
-  - Audio synthesis modules (pending)
-  - Integration modules (pending)
-- [ ] Verification Pending (Tasks 15-20)
-- [ ] Final Documentation Pending (Task 21)
+- [x] **Project Setup Complete** (Tasks 1-4 ✓)
+  - Caravel template copied and configured
+  - Comprehensive IP gap analysis with trade-off study
+  - Complete system architecture with block diagrams
+  - Full documentation suite (register_map.md, pad_map.md, integration_notes.md, architecture.md)
+  - IPs linked via ipm: EF_GPIO8, CF_SRAM_1024x32, CF_I2S, CF_SPI
+  
+- [x] **RTL Development Complete** (Tasks 5-14 ✓)
+  - ✅ `keyboard_scanner.v` - 37-key matrix scanner with velocity sensing and event FIFO
+  - ✅ `wavetable_osc.v` - 8-voice wavetable synthesizer with phase accumulation
+  - ✅ `adsr_envelope.v` - 8-channel ADSR envelope generator with gate control
+  - ✅ `voice_manager.v` - Voice allocation and management system
+  - ✅ `audio_mixer.v` - 8-voice audio mixer with saturation and pan control
+  - ✅ `theremin_ctrl.v` - SPI ADC interface with smoothing filter
+  - ✅ `user_project.v` - Top-level integration with Wishbone bus splitter
+  - ✅ `user_project_wrapper.v` - Caravel wrapper with pad assignments
+  - **Total Custom RTL:** ~2500 lines across 7 modules
+  
+- [ ] **Verification In Progress** (Tasks 15-20)
+  - Task 15: RTL acceptance checklist (in progress)
+  - Pending: cocotb testbenches for each module
+  - Pending: System integration tests
+  
+- [ ] **Final Documentation** (Task 21)
 
 ## Repository Structure
 
