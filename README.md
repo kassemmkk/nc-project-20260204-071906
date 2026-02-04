@@ -43,14 +43,22 @@ The instrument is implemented as a Caravel user project with the following major
 
 ## Project Status
 
-**Current Stage:** Project Setup  
-**Overall Progress:** 0% (Task 1 of 21 in progress)
+**Current Stage:** RTL Development  
+**Overall Progress:** 19% (Task 5 of 21 in progress)
 
 ### Milestones
-- [ ] Project Setup Complete
-- [ ] RTL Development Complete
-- [ ] Verification Complete
-- [ ] Documentation Complete
+- [x] Project Setup Complete (Tasks 1-4 ✓)
+  - Caravel template copied
+  - IP gap analysis complete
+  - Architecture designed with full address map
+  - Register map, pad map, integration notes documented
+  - IPs linked: EF_GPIO8, CF_SRAM_1024x32, CF_I2S, CF_SPI
+- [ ] RTL Development In Progress (Tasks 5-14)
+  - Keyboard scanner module (in progress)
+  - Audio synthesis modules (pending)
+  - Integration modules (pending)
+- [ ] Verification Pending (Tasks 15-20)
+- [ ] Final Documentation Pending (Task 21)
 
 ## Repository Structure
 
