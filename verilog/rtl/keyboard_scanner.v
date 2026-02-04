@@ -157,33 +157,33 @@ module keyboard_scanner #(
         
         for (i = 0; i < NUM_COLS; i = i + 1) begin
           if (i < NUM_COLS) begin
-            automatic integer key_num;
-            automatic logic col_pressed;
-            key_num = current_row * NUM_COLS + i;
+            reg [5:0] key_num_tmp;
+            reg col_pressed_tmp;
+            key_num_tmp = current_row * NUM_COLS + i[5:0];
             
-            if (key_num < 42) begin
-              col_pressed = !col_in[i];
+            if (key_num_tmp < 42) begin
+              col_pressed_tmp = !col_in[i];
               
-              if (col_pressed && !velocity_measuring[key_num]) begin
-                velocity_measuring[key_num] <= 1'b1;
-                velocity_timer[key_num] <= 16'h0000;
-              end else if (velocity_measuring[key_num]) begin
-                if (velocity_timer[key_num] < 16'hFFFF)
-                  velocity_timer[key_num] <= velocity_timer[key_num] + 1'b1;
+              if (col_pressed_tmp && !velocity_measuring[key_num_tmp]) begin
+                velocity_measuring[key_num_tmp] <= 1'b1;
+                velocity_timer[key_num_tmp] <= 16'h0000;
+              end else if (velocity_measuring[key_num_tmp]) begin
+                if (velocity_timer[key_num_tmp] < 16'hFFFF)
+                  velocity_timer[key_num_tmp] <= velocity_timer[key_num_tmp] + 1'b1;
               end
               
-              if (col_pressed != key_state[key_num]) begin
-                if (debounce_counter[key_num] < {debounce_time, 12'h000})
-                  debounce_counter[key_num] <= debounce_counter[key_num] + 1'b1;
+              if (col_pressed_tmp != key_state[key_num_tmp]) begin
+                if (debounce_counter[key_num_tmp] < {debounce_time, 12'h000})
+                  debounce_counter[key_num_tmp] <= debounce_counter[key_num_tmp] + 1'b1;
                 else begin
-                  key_state[key_num] <= col_pressed;
-                  debounce_counter[key_num] <= 16'h0000;
+                  key_state[key_num_tmp] <= col_pressed_tmp;
+                  debounce_counter[key_num_tmp] <= 16'h0000;
                   
-                  if (col_pressed)
-                    velocity_measuring[key_num] <= 1'b0;
+                  if (col_pressed_tmp)
+                    velocity_measuring[key_num_tmp] <= 1'b0;
                 end
               end else begin
-                debounce_counter[key_num] <= 16'h0000;
+                debounce_counter[key_num_tmp] <= 16'h0000;
               end
             end
           end
@@ -224,25 +224,25 @@ module keyboard_scanner #(
         for (i = 0; i < 42; i = i + 1) begin
           if (key_pressed[i] || key_released[i]) begin
             if (!fifo_full) begin
-              automatic logic [7:0] velocity;
-              automatic logic [7:0] timestamp;
+              reg [7:0] velocity_tmp;
+              reg [7:0] timestamp_tmp;
               
               if (velocity_timer[i] < 16'h0080)
-                velocity = 8'h7F;
+                velocity_tmp = 8'h7F;
               else if (velocity_timer[i] < 16'h0100)
-                velocity = 8'h70 - {4'h0, velocity_timer[i][7:4]};
+                velocity_tmp = 8'h70 - {4'h0, velocity_timer[i][7:4]};
               else if (velocity_timer[i] < 16'h0200)
-                velocity = 8'h60 - {4'h0, velocity_timer[i][8:5]};
+                velocity_tmp = 8'h60 - {4'h0, velocity_timer[i][8:5]};
               else if (velocity_timer[i] < 16'h0400)
-                velocity = 8'h50 - {4'h0, velocity_timer[i][9:6]};
+                velocity_tmp = 8'h50 - {4'h0, velocity_timer[i][9:6]};
               else if (velocity_timer[i] < 16'h0800)
-                velocity = 8'h40 - {4'h0, velocity_timer[i][10:7]};
+                velocity_tmp = 8'h40 - {4'h0, velocity_timer[i][10:7]};
               else
-                velocity = 8'h20;
+                velocity_tmp = 8'h20;
               
-              timestamp = scan_counter[15:8];
+              timestamp_tmp = scan_counter[15:8];
               
-              event_fifo[fifo_wr_ptr[3:0]] <= {timestamp, 7'h00, key_pressed[i], velocity, i[7:0]};
+              event_fifo[fifo_wr_ptr[3:0]] <= {timestamp_tmp, 7'h00, key_pressed[i], velocity_tmp, i[7:0]};
               
               if (fifo_wr_ptr < 5'd15)
                 fifo_wr_ptr <= fifo_wr_ptr + 1'b1;
