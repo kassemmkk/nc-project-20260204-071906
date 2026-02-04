@@ -173,7 +173,7 @@
   - Moving average filter (8 samples)
   - Range mapping and scaling
   - Modulation depth control
-  - 
+  - two antennas with two frequencies / 
 - **Output:** Pitch offset, volume scale
 
 ### 8. Audio Mixer
