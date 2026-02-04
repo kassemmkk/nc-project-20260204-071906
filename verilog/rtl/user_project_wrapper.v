@@ -82,16 +82,14 @@ module user_project_wrapper #(
 /* User project is instantiated  here   */
 /*--------------------------------------*/
 
-user_proj_example mprj (
+user_project mprj (
 `ifdef USE_POWER_PINS
-	.vccd1(vccd1),	// User area 1 1.8V power
-	.vssd1(vssd1),	// User area 1 digital ground
+	.vccd1(vccd1),
+	.vssd1(vssd1),
 `endif
 
     .wb_clk_i(wb_clk_i),
     .wb_rst_i(wb_rst_i),
-
-    // MGMT SoC Wishbone Slave
 
     .wbs_cyc_i(wbs_cyc_i),
     .wbs_stb_i(wbs_stb_i),
@@ -101,22 +99,38 @@ user_proj_example mprj (
     .wbs_dat_i(wbs_dat_i),
     .wbs_ack_o(wbs_ack_o),
     .wbs_dat_o(wbs_dat_o),
-
-    // Logic Analyzer
-
-    .la_data_in(la_data_in),
-    .la_data_out(la_data_out),
-    .la_oenb (la_oenb),
-
-    // IO Pads
-
-    .io_in ({io_in[37:30],io_in[7:0]}),
-    .io_out({io_out[37:30],io_out[7:0]}),
-    .io_oeb({io_oeb[37:30],io_oeb[7:0]}),
-
-    // IRQ
-    .irq(user_irq)
+    
+    .user_irq(user_irq),
+    
+    .keyboard_row_in(io_in[10:5]),
+    .keyboard_row_out(io_out[10:5]),
+    .keyboard_col_in(io_in[17:11]),
+    
+    .i2s_sclk(io_out[18]),
+    .i2s_ws(io_out[19]),
+    .i2s_sd(io_out[20]),
+    
+    .spi_sck(io_out[21]),
+    .spi_mosi(io_out[22]),
+    .spi_miso(io_in[23]),
+    .spi_cs_n(io_out[24]),
+    
+    .status_led0(io_out[25]),
+    .status_led1(io_out[26])
 );
+
+assign io_oeb[4:0] = 5'h1F;
+assign io_oeb[10:5] = 6'b000000;
+assign io_oeb[17:11] = 7'b1111111;
+assign io_oeb[22:18] = 5'b00000;
+assign io_oeb[23] = 1'b1;
+assign io_oeb[26:24] = 3'b000;
+assign io_oeb[37:27] = 11'h7FF;
+
+assign io_out[4:0] = 5'h00;
+assign io_out[37:27] = 11'h000;
+
+assign la_data_out = 128'h0;
 
 endmodule	// user_project_wrapper
 
